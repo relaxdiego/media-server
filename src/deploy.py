@@ -8,8 +8,12 @@ from pyinfra.operations import apt, files, server, systemd
 media_mount_point = "/media"
 device_id = f"PARTUUID={host.data.media_device_partition_uuid}"
 
-transmission_downloading = f"{media_mount_point}/downloading"
-transmission_new = f"{media_mount_point}/new"
+transmission_dir_downloading = f"{media_mount_point}/downloading"
+transmission_dir_completed = f"{media_mount_point}/new"
+transmission_rpc_username = "transmission"
+transmission_rpc_password = "password"
+transmission_rpc_whitelist = "10.10.*.*"
+transmission_service_user = "pi"
 
 
 #
@@ -31,7 +35,10 @@ server.shell(
     _sudo=True,
 )
 
-for path in [transmission_downloading, transmission_new]:
+for path in [
+    transmission_dir_downloading,
+    transmission_dir_completed,
+]:
     files.directory(
         name=f"Ensure Transmission dir: {path}",
         path=path,
@@ -42,6 +49,7 @@ for path in [transmission_downloading, transmission_new]:
 #
 # Transmission
 # https://pimylifeup.com/raspberry-pi-transmission/
+# https://askubuntu.com/questions/290943/transmission-daemon-error-loading-working-config-file-user-priveliges
 #
 
 apt.packages(
@@ -62,30 +70,98 @@ systemd.service(
     _sudo=True,
 )
 
+transmission_config_items = {
+    "incomplete-dir": f'"{transmission_dir_downloading}"',
+    "incomplete-dir-enabled": "true",
+    "download-dir": f'"{transmission_dir_completed}"',
+    "rpc-password": f'"{transmission_rpc_password}"',
+    "rpc-username": f'"{transmission_rpc_username}"',
+    "rpc-whitelist": f'"{transmission_rpc_whitelist}"',
+    "rpc-whitelist-enabled": "true",
+}
+
+for key, value in transmission_config_items.items():
+    files.line(
+        name=f"Configure {key}",
+        path="/etc/transmission-daemon/settings.json",
+        line=f'"{key}"',
+        replace=f'"{key}": {value},',
+        present=True,
+        _sudo=True,
+    )
+
+
 files.line(
-    name="Configure incomplete-dir",
-    path="/etc/transmission-daemon/settings.json",
-    line='"incomplete-dir"',
-    replace=f'"incomplete-dir": "{transmission_downloading}",',
+    name="Fix USER in /etc/init.d/transmission-daemon",
+    path="/etc/init.d/transmission-daemon",
+    line="^USER=.*$",
+    replace=f"USER={transmission_service_user}",
     present=True,
     _sudo=True,
 )
 
-files.line(
-    name="Enable incomplete-dir",
-    path="/etc/transmission-daemon/settings.json",
-    line='"incomplete-dir-enabled"',
-    replace='"incomplete-dir-enabled": true,',
-    present=True,
+systemd_files = [
+    "/etc/systemd/system/multi-user.target.wants/transmission-daemon.service",
+    "/lib/systemd/system/transmission-daemon.service",
+]
+
+for systemd_file in systemd_files:
+    files.line(
+        name=f"Fix user in {systemd_file}",
+        path=systemd_file,
+        line="^[Uu]ser=.*$",
+        replace=f"User={transmission_service_user}",
+        present=True,
+        _sudo=True,
+    )
+
+systemd.daemon_reload(
     _sudo=True,
 )
 
-files.line(
-    name="Configure download-dir",
-    path="/etc/transmission-daemon/settings.json",
-    line='"download-dir"',
-    replace=f'"download-dir": "{transmission_new}",',
+files.directory(
+    name=f"Ensure {transmission_service_user} owns /etc/transmission-daemon",
+    path="/etc/transmission-daemon",
     present=True,
+    user=transmission_service_user,
+    group=transmission_service_user,
+    recursive=True,
+    _sudo=True,
+)
+
+files.directory(
+    name=f"Ensure {transmission_service_user} owns /var/lib/transmission-daemon",
+    path="/var/lib/transmission-daemon",
+    present=True,
+    user=transmission_service_user,
+    group=transmission_service_user,
+    recursive=True,
+    _sudo=True,
+)
+
+files.directory(
+    name=f"Ensure Transmission config dir in {transmission_service_user} home dir",
+    path=f"/home/{transmission_service_user}/.config/transmission-daemon/",
+    present=True,
+    user=transmission_service_user,
+    group=transmission_service_user,
+    recursive=True,
+    _sudo=True,
+)
+
+files.link(
+    name="Ensure symlink in config dir",
+    path=f"/home/{transmission_service_user}/.config/transmission-daemon/settings.json",
+    target="/etc/transmission-daemon/settings.json",
+)
+
+files.directory(
+    name=f"Ensure {transmission_service_user} owns config dir",
+    path=f"/home/{transmission_service_user}/.config/transmission-daemon/",
+    present=True,
+    user=transmission_service_user,
+    group=transmission_service_user,
+    recursive=True,
     _sudo=True,
 )
 

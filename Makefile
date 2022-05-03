@@ -19,6 +19,7 @@ setup: .venv/initialized
 .PHONY: deploy
 deploy:
 	scripts/deploy
+	pytest
 
 ##   clean        : Remove production and development dependencies
 .PHONY: clean
