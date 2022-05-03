@@ -78,6 +78,8 @@ transmission_config_items = {
     "rpc-username": f'"{transmission_rpc_username}"',
     "rpc-whitelist": f'"{transmission_rpc_whitelist}"',
     "rpc-whitelist-enabled": "true",
+    "ratio-limit": 2,
+    "ratio-limit-enabled": "true",
 }
 
 for key, value in transmission_config_items.items():
