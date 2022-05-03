@@ -1,4 +1,4 @@
-pyinfra==2.0.2
+pyinfra~=2.1.0
 black==22.3.0
 flake8==4.0.1
 pep8==1.7.1
