@@ -170,3 +170,42 @@ systemd.service(
 # Plex Media Server
 #
 # https://pimylifeup.com/raspberry-pi-plex-server/
+
+apt.packages(
+    name="Ensure plex package prerequisites",
+    packages=["apt-transport-https"],
+    update=True,
+    cache_time=3600,  # seconds
+    _sudo=True,
+)
+
+plex_pubkey_path = "/root/PlexSign.key"
+
+# We go through files.download first so that we can md5sum it
+files.download(
+    name="Download Plex apt repo pubkey",
+    src="https://downloads.plex.tv/plex-keys/PlexSign.key",
+    dest=plex_pubkey_path,
+    md5sum="19930ce0357f723e590210e3101321a3",
+    _sudo=True,
+)
+
+apt.key(
+    name="Add Plex apt repo pubkey",
+    src=plex_pubkey_path,
+    _sudo=True,
+)
+
+apt.repo(
+    name="Ensure Plex apt repo",
+    src="deb https://downloads.plex.tv/repo/deb public main",
+    _sudo=True,
+)
+
+apt.packages(
+    name="Ensure plex package",
+    packages=["plexmediaserver"],
+    update=True,
+    cache_time=3600,  # seconds
+    _sudo=True,
+)
