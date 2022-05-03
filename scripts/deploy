@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck source=scripts/deploy
 
-set -e
+set -ex
 
 .venv/bin/pyinfra src/inventory.py src/deploy.py
