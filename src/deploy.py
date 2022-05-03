@@ -66,7 +66,7 @@ files.line(
     name="Configure incomplete-dir",
     path="/etc/transmission-daemon/settings.json",
     line='"incomplete-dir"',
-    replace=(f'"incomplete-dir": "{transmission_downloading}",'),
+    replace=f'"incomplete-dir": "{transmission_downloading}",',
     present=True,
     _sudo=True,
 )
@@ -75,7 +75,7 @@ files.line(
     name="Enable incomplete-dir",
     path="/etc/transmission-daemon/settings.json",
     line='"incomplete-dir-enabled"',
-    replace=('"incomplete-dir-enabled": true,'),
+    replace='"incomplete-dir-enabled": true,',
     present=True,
     _sudo=True,
 )
@@ -84,7 +84,7 @@ files.line(
     name="Configure download-dir",
     path="/etc/transmission-daemon/settings.json",
     line='"download-dir"',
-    replace=(f'"download-dir": "{transmission_new}",'),
+    replace=f'"download-dir": "{transmission_new}",',
     present=True,
     _sudo=True,
 )
