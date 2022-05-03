@@ -4,6 +4,8 @@
 #
 #    pip-compile
 #
+-e file:///Users/mark/src/github.com/relaxdiego/media-server
+    # via -r requirements.in
 astroid==2.11.4
     # via pylint
 attrs==21.4.0

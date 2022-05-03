@@ -3,12 +3,12 @@ import requests
 testinfra_hosts = ["localhost"]
 
 
-def test_access_to_transmission_web_interface():
+def test_access_to_transmission_web_interface(config):
     response = requests.get(
         "http://10.10.1.37:9091",
         auth=(
-            "transmission",
-            "password",
+            config.transmission.settings.rpc_username,
+            config.transmission.settings.rpc_password,
         ),
         verify=False,
     )
