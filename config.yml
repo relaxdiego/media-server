@@ -1,0 +1,16 @@
+---
+media_device:
+  mount_point: "/media"
+  device_id: "PARTUUID=f8120aa8-86e4-41ea-9a89-1ebe7af85a3d"
+
+transmission:
+  settings:
+    incomplete_dir: "/media/downloading"
+    incomplete_dir_enabled: true
+    download_dir: "/media/new"
+    rpc_username: "transmission"
+    rpc_password: "password"
+    rpc_whitelist: "10.10.*.*"
+  service:
+    # Which Linux user should Transmission run as
+    user: "pi"

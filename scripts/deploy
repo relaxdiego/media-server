@@ -3,5 +3,4 @@
 
 set -e
 
-cd src
-../.venv/bin/pyinfra inventory.py deploy.py
+.venv/bin/pyinfra src/inventory.py src/deploy.py

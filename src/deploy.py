@@ -1,20 +1,8 @@
 from pyinfra import host
 from pyinfra.operations import apt, files, server, systemd
 
-#
-# Variables
-#
-
-media_mount_point = "/media"
-device_id = f"PARTUUID={host.data.media_device_partition_uuid}"
-
-transmission_dir_downloading = f"{media_mount_point}/downloading"
-transmission_dir_completed = f"{media_mount_point}/new"
-transmission_rpc_username = "transmission"
-transmission_rpc_password = "password"
-transmission_rpc_whitelist = "10.10.*.*"
-transmission_service_user = "pi"
-
+media = host.data.media_device
+transmission = host.data.transmission
 
 #
 # Storage
@@ -23,8 +11,10 @@ transmission_service_user = "pi"
 files.line(
     name="Ensure /etc/fstab has media mount point",
     path="/etc/fstab",
-    line=media_mount_point,
-    replace=(f"{device_id} {media_mount_point} ext4 defaults,auto,users,rw,nofail 0 0"),
+    line=media.mount_point,
+    replace=(
+        f"{media.device_id} {media.mount_point} ext4 defaults,auto,users,rw,nofail 0 0"
+    ),
     present=True,
     _sudo=True,
 )
@@ -36,8 +26,8 @@ server.shell(
 )
 
 for path in [
-    transmission_dir_downloading,
-    transmission_dir_completed,
+    transmission.settings.incomplete_dir,
+    transmission.settings.download_dir,
 ]:
     files.directory(
         name=f"Ensure Transmission dir: {path}",
@@ -48,6 +38,7 @@ for path in [
 
 #
 # Transmission
+#
 # https://pimylifeup.com/raspberry-pi-transmission/
 # https://askubuntu.com/questions/290943/transmission-daemon-error-loading-working-config-file-user-priveliges
 #
@@ -70,13 +61,14 @@ systemd.service(
     _sudo=True,
 )
 
+settings = transmission.settings
 transmission_config_items = {
-    "incomplete-dir": f'"{transmission_dir_downloading}"',
-    "incomplete-dir-enabled": "true",
-    "download-dir": f'"{transmission_dir_completed}"',
-    "rpc-password": f'"{transmission_rpc_password}"',
-    "rpc-username": f'"{transmission_rpc_username}"',
-    "rpc-whitelist": f'"{transmission_rpc_whitelist}"',
+    "incomplete-dir": settings.to_json_value("incomplete_dir"),
+    "incomplete-dir-enabled": settings.to_json_value("incomplete_dir_enabled"),
+    "download-dir": settings.to_json_value("download_dir"),
+    "rpc-password": settings.to_json_value("rpc_password"),
+    "rpc-username": settings.to_json_value("rpc_username"),
+    "rpc-whitelist": settings.to_json_value("rpc_whitelist"),
     "rpc-whitelist-enabled": "true",
     "ratio-limit": 2,
     "ratio-limit-enabled": "true",
@@ -97,7 +89,7 @@ files.line(
     name="Fix USER in /etc/init.d/transmission-daemon",
     path="/etc/init.d/transmission-daemon",
     line="^USER=.*$",
-    replace=f"USER={transmission_service_user}",
+    replace=f"USER={transmission.service.user}",
     present=True,
     _sudo=True,
 )
@@ -112,7 +104,7 @@ for systemd_file in systemd_files:
         name=f"Fix user in {systemd_file}",
         path=systemd_file,
         line="^[Uu]ser=.*$",
-        replace=f"User={transmission_service_user}",
+        replace=f"User={transmission.service.user}",
         present=True,
         _sudo=True,
     )
@@ -122,47 +114,47 @@ systemd.daemon_reload(
 )
 
 files.directory(
-    name=f"Ensure {transmission_service_user} owns /etc/transmission-daemon",
+    name=f"Ensure {transmission.service.user} owns /etc/transmission-daemon",
     path="/etc/transmission-daemon",
     present=True,
-    user=transmission_service_user,
-    group=transmission_service_user,
+    user=transmission.service.user,
+    group=transmission.service.user,
     recursive=True,
     _sudo=True,
 )
 
 files.directory(
-    name=f"Ensure {transmission_service_user} owns /var/lib/transmission-daemon",
+    name=f"Ensure {transmission.service.user} owns /var/lib/transmission-daemon",
     path="/var/lib/transmission-daemon",
     present=True,
-    user=transmission_service_user,
-    group=transmission_service_user,
+    user=transmission.service.user,
+    group=transmission.service.user,
     recursive=True,
     _sudo=True,
 )
 
 files.directory(
-    name=f"Ensure Transmission config dir in {transmission_service_user} home dir",
-    path=f"/home/{transmission_service_user}/.config/transmission-daemon/",
+    name=f"Ensure Transmission config dir in {transmission.service.user} home dir",
+    path=f"/home/{transmission.service.user}/.config/transmission-daemon/",
     present=True,
-    user=transmission_service_user,
-    group=transmission_service_user,
+    user=transmission.service.user,
+    group=transmission.service.user,
     recursive=True,
     _sudo=True,
 )
 
 files.link(
     name="Ensure symlink in config dir",
-    path=f"/home/{transmission_service_user}/.config/transmission-daemon/settings.json",
+    path=f"/home/{transmission.service.user}/.config/transmission-daemon/settings.json",
     target="/etc/transmission-daemon/settings.json",
 )
 
 files.directory(
-    name=f"Ensure {transmission_service_user} owns config dir",
-    path=f"/home/{transmission_service_user}/.config/transmission-daemon/",
+    name=f"Ensure {transmission.service.user} owns config dir",
+    path=f"/home/{transmission.service.user}/.config/transmission-daemon/",
     present=True,
-    user=transmission_service_user,
-    group=transmission_service_user,
+    user=transmission.service.user,
+    group=transmission.service.user,
     recursive=True,
     _sudo=True,
 )
@@ -173,3 +165,8 @@ systemd.service(
     running=True,
     _sudo=True,
 )
+
+#
+# Plex Media Server
+#
+# https://pimylifeup.com/raspberry-pi-plex-server/

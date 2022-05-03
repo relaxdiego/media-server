@@ -96,6 +96,8 @@ pycodestyle==2.8.0
     # via flake8
 pycparser==2.21
     # via cffi
+pydantic==1.9.0
+    # via -r requirements.in
 pyflakes==2.4.0
     # via flake8
 pyinfra==2.1
@@ -117,7 +119,9 @@ python-dateutil==2.8.2
 pywinrm==0.4.3
     # via pyinfra
 pyyaml==6.0
-    # via pre-commit
+    # via
+    #   -r requirements.in
+    #   pre-commit
 requests==2.27.1
     # via
     #   -r requirements.in
@@ -142,6 +146,7 @@ typing-extensions==4.2.0
     # via
     #   astroid
     #   black
+    #   pydantic
     #   pylint
 urllib3==1.26.9
     # via requests

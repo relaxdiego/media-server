@@ -11,7 +11,7 @@
 ##   setup           : Sets up all dependencies
 .PHONY: setup
 setup: .venv/initialized
-.venv/initialized:
+.venv/initialized: scripts/setup-python requirements.in
 	@scripts/setup-python
 	@touch .venv/initialized
 
