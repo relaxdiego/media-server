@@ -1,0 +1,6 @@
+pyinfra==2.0.2
+black==22.3.0
+flake8==4.0.1
+pep8==1.7.1
+pre-commit==2.18.1
+pylint==2.13.8

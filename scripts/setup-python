@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# shellcheck source=scripts/setup-python
+
+set -e
+
+python3 -m venv .venv
+.venv/bin/python -m pip install --upgrade pip
+.venv/bin/python -m pip install pip-tools==6.6.0
+.venv/bin/python -m pip install -r requirements.txt
+
+echo "Python setup complete"
