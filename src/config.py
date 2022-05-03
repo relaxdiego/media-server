@@ -3,10 +3,6 @@ from typing import List
 from pydantic import BaseModel
 
 
-class InventoryConfig(BaseModel):
-    all: List[str]
-
-
 class MediaDeviceConfig(BaseModel):
     mount_point: str
     device_id: str
@@ -43,6 +39,6 @@ class TransmissionConfig(BaseModel):
 
 
 class ConfigFile(BaseModel):
-    inventory: InventoryConfig
+    host: str
     media_device: MediaDeviceConfig
     transmission: TransmissionConfig

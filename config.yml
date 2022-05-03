@@ -1,8 +1,6 @@
 ---
-inventory:
-  all:
-    # TODO: Make pytest.ini addopts --hosts match this automatically
-    - media.local
+# TODO: Make pytest.ini addopts --hosts match this automatically
+host: media.local
 
 media_device:
   mount_point: "/media"
