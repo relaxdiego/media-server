@@ -15,6 +15,11 @@ setup: .venv/initialized
 	@scripts/setup-python
 	@touch .venv/initialized
 
+##   deploy       : Deploy the media server config
+.PHONY: deploy
+deploy:
+	scripts/deploy
+
 ##   clean        : Remove production and development dependencies
 .PHONY: clean
 clean:
