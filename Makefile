@@ -8,20 +8,20 @@
 ## Available Goals:
 ##
 
-##   setup        : Sets up all dependencies
+##   setup           : Sets up all dependencies
 .PHONY: setup
 setup: .venv/initialized
 .venv/initialized:
 	@scripts/setup-python
 	@touch .venv/initialized
 
-##   deploy       : Deploy the media server config
+##   deploy          : Deploy the media server config
 .PHONY: deploy
 deploy:
 	scripts/deploy
 	pytest
 
-##   clean        : Remove production and development dependencies
+##   clean           : Remove production and development dependencies
 .PHONY: clean
 clean:
 	rm -rf \
@@ -35,21 +35,19 @@ clean:
 	src/*.egg-info \
 	test-results
 
-##   pre-commit   : Run all pre-commit hooks
+##   pre-commit      : Run all pre-commit hooks
 .PHONY : pre-commit
 pre-commit: pre-commit-install
 	.venv/bin/pre-commit run --all-files
 pre-commit-install: setup .pre-commit-config.yaml
 	.venv/bin/pre-commit install
 
-##   requirements : Re-compile requirements.txt from requirements.in
-.PHONY : requirements
-requirements: requirements.txt
+##   requirements.txt: Re-compile requirements.txt from requirements.in
 requirements.txt: setup requirements.in scripts/setup-python
 	.venv/bin/pip-compile
 
 # From: https://swcarpentry.github.io/make-novice/08-self-doc/index.html
-##   help         : Print this help message
+##   help            : Print this help message
 .DEFAULT_GOAL := help
 .PHONY : help
 help : Makefile
