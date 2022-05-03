@@ -1,4 +1,9 @@
 ---
+inventory:
+  all:
+    # TODO: Make pytest.ini addopts --hosts match this automatically
+    - media.local
+
 media_device:
   mount_point: "/media"
   device_id: "PARTUUID=f8120aa8-86e4-41ea-9a89-1ebe7af85a3d"

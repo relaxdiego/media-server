@@ -1,4 +1,10 @@
+from typing import List
+
 from pydantic import BaseModel
+
+
+class InventoryConfig(BaseModel):
+    all: List[str]
 
 
 class MediaDeviceConfig(BaseModel):
@@ -37,5 +43,6 @@ class TransmissionConfig(BaseModel):
 
 
 class ConfigFile(BaseModel):
+    inventory: InventoryConfig
     media_device: MediaDeviceConfig
     transmission: TransmissionConfig
