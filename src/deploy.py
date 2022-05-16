@@ -1,8 +1,8 @@
 from pyinfra import host
 from pyinfra.operations import apt, files, server, systemd
 
-media = host.data.media_device
-transmission = host.data.transmission
+media = host.data.config.media_device
+transmission = host.data.config.transmission
 
 #
 # Storage
@@ -160,10 +160,9 @@ files.directory(
 )
 
 systemd.service(
-    name="Ensure Transmission is not running during configuration",
+    name="Ensure Transmission is started and enabled",
     service="transmission-daemon",
     running=True,
-    enabled=True,
     _sudo=True,
 )
 

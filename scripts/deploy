@@ -3,4 +3,4 @@
 
 set -ex
 
-.venv/bin/pyinfra --debug src/inventory.py src/deploy.py
+.venv/bin/pyinfra src/inventory.py src/deploy.py
