@@ -5,7 +5,8 @@ set -e
 
 python3 -m venv .venv
 .venv/bin/python -m pip install --upgrade pip
-.venv/bin/python -m pip install pip-tools==6.6.0
+# See: pip and pip-tools bug https://github.com/jazzband/pip-tools/issues/1617
+.venv/bin/python -m pip install pip-tools==6.6.1
 .venv/bin/pip-sync
 
 echo "Python setup complete"
