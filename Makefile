@@ -23,7 +23,7 @@ deploy:
 ##   test             : Test the deployment
 .PHONY: test
 test:
-	pytest
+	.venv/bin/pytest
 
 ##   clean            : Remove production and development dependencies
 .PHONY: clean
