@@ -163,6 +163,7 @@ systemd.service(
     name="Ensure Transmission is not running during configuration",
     service="transmission-daemon",
     running=True,
+    enabled=True,
     _sudo=True,
 )
 
