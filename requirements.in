@@ -1,7 +1,8 @@
 -e .
-pyinfra~=2.1.0
+pyinfra~=2.0
 black==22.3.0
 flake8==4.0.1
+paramiko~=2.11.0
 pep8==1.7.1
 pre-commit==2.18.1
 pydantic==1.9.0
