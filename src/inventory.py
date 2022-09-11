@@ -9,4 +9,4 @@ with open("config.yml", "r") as fd:
 config = ConfigFile(**config_obj)
 
 # Assign
-media_servers = [config.host]
+media_servers = [tuple(host) for host in config.hosts]

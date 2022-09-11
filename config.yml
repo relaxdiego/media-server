@@ -1,6 +1,17 @@
 ---
 # TODO: Make pytest.ini addopts --hosts match this automatically
-host: media.local
+hosts:
+  - [
+      media.local,
+      # https://docs.pyinfra.com/en/2.x/connectors/ssh.html
+      {
+        # The default Paramiko connector doesn't use ~/.ssh/config
+        # so we have to specify these values here directly.
+        ssh_key: "~/.ssh/id_rsa",
+        ssh_user: "pi",
+        ssh_allow_agent: true,
+      }
+    ]
 
 media_device:
   mount_point: "/media"

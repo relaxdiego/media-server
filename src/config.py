@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple, Union
 
 from pydantic import BaseModel
 
@@ -39,6 +39,6 @@ class TransmissionConfig(BaseModel):
 
 
 class ConfigFile(BaseModel):
-    host: str
+    hosts: List[Tuple]
     media_device: MediaDeviceConfig
     transmission: TransmissionConfig
