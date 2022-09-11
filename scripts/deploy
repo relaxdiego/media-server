@@ -4,3 +4,11 @@
 set -ex
 
 .venv/bin/pyinfra src/inventory.py src/deploy.py
+
+{ set +x; } 2>/dev/null
+echo "==================="
+echo " Running Testinfra"
+echo "==================="
+
+set -x
+.venv/bin/pytest
