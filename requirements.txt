@@ -14,7 +14,7 @@ bcrypt==3.2.2
     # via paramiko
 black==22.3.0
     # via -r requirements.in
-certifi==2021.10.8
+certifi==2022.12.7
     # via requests
 cffi==1.15.0
     # via
@@ -142,10 +142,7 @@ six==1.16.0
 toml==0.10.2
     # via pre-commit
 tomli==2.0.1
-    # via
-    #   black
-    #   pylint
-    #   pytest
+    # via pytest
 typing-extensions==4.2.0
     # via pydantic
 urllib3==1.26.9
